@@ -386,6 +386,7 @@ rust.unexpected_cfgs = { level = "warn", check-cfg = [
     'cfg(needs_alloc_error_handler)',
     'cfg(icu4x_run_size_tests)',
     'cfg(icu4x_unstable_fast_trie_only)',
+    'cfg(target_abi, values("polyasm"))',
 ] }
 rust.unused_lifetimes = "warn"
 rust.unused_macro_rules = "warn"

@@ -214,7 +214,7 @@ where
     fn slice_to_unaligned(slice: &[Self]) -> Option<&[Self::ULE]>;
 }
 
-#[cfg(target_endian = "little")]
+#[cfg(any(target_endian = "little", target_abi = "polyasm"))]
 impl<T> SliceAsULE for T
 where
     T: EqULE,
@@ -230,7 +230,7 @@ where
     }
 }
 
-#[cfg(not(target_endian = "little"))]
+#[cfg(not(any(target_endian = "little", target_abi = "polyasm")))]
 impl<T> SliceAsULE for T
 where
     T: EqULE,

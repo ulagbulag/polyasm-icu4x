@@ -27,7 +27,7 @@ impl Aligned4 {
 
     pub const fn len(&self) -> usize {
         let word = self.0;
-        #[cfg(target_endian = "little")]
+        #[cfg(any(target_endian = "little", target_abi = "polyasm"))]
         let len = (4 - word.leading_zeros() / 8) as usize;
         #[cfg(target_endian = "big")]
         let len = (4 - word.trailing_zeros() / 8) as usize;
@@ -80,10 +80,11 @@ impl Aligned4 {
     pub const fn is_ascii_titlecase(&self) -> bool {
         let word = self.0;
         // See explanatory comments in is_ascii_lowercase
-        let invalid_case = if cfg!(target_endian = "little") {
-            !(word + 0x3f3f_3f1f) | (word + 0x2525_2505)
-        } else {
-            !(word + 0x1f3f_3f3f) | (word + 0x0525_2525)
+        let invalid_case = cfg_select! {
+            any(target_endian = "little", target_abi = "polyasm") => {
+                !(word + 0x3f3f_3f1f) | (word + 0x2525_2505)
+            }
+            _ => !(word + 0x1f3f_3f3f) | (word + 0x0525_2525),
         };
         (invalid_case & 0x8080_8080) == 0x8080_8080
     }
@@ -110,10 +111,11 @@ impl Aligned4 {
         let word = self.0;
         // See explanatory comments in is_ascii_alphabetic_lowercase
         let mask = (word + 0x7f7f_7f7f) & 0x8080_8080;
-        let title_case = if cfg!(target_endian = "little") {
-            !(word + 0x1f1f_1f3f) | (word + 0x0505_0525)
-        } else {
-            !(word + 0x3f1f_1f1f) | (word + 0x2505_0505)
+        let title_case = cfg_select! {
+            any(target_endian = "little", target_abi = "polyasm") => {
+                !(word + 0x1f1f_1f3f) | (word + 0x0505_0525)
+            }
+            _ => !(word + 0x3f1f_1f1f) | (word + 0x2505_0505),
         };
         (title_case & mask) == 0
     }
@@ -169,7 +171,7 @@ impl Aligned8 {
 
     pub const fn len(&self) -> usize {
         let word = self.0;
-        #[cfg(target_endian = "little")]
+        #[cfg(any(target_endian = "little", target_abi = "polyasm"))]
         let len = (8 - word.leading_zeros() / 8) as usize;
         #[cfg(target_endian = "big")]
         let len = (8 - word.trailing_zeros() / 8) as usize;
@@ -208,10 +210,11 @@ impl Aligned8 {
 
     pub const fn is_ascii_titlecase(&self) -> bool {
         let word = self.0;
-        let invalid_case = if cfg!(target_endian = "little") {
-            !(word + 0x3f3f_3f3f_3f3f_3f1f) | (word + 0x2525_2525_2525_2505)
-        } else {
-            !(word + 0x1f3f_3f3f_3f3f_3f3f) | (word + 0x0525_2525_2525_2525)
+        let invalid_case = cfg_select! {
+            any(target_endian = "little", target_abi = "polyasm") => {
+                !(word + 0x3f3f_3f3f_3f3f_3f1f) | (word + 0x2525_2525_2525_2505)
+            }
+            _ => !(word + 0x1f3f_3f3f_3f3f_3f3f) | (word + 0x0525_2525_2525_2525),
         };
         (invalid_case & 0x8080_8080_8080_8080) == 0x8080_8080_8080_8080
     }
@@ -237,10 +240,11 @@ impl Aligned8 {
         let word = self.0;
         // See explanatory comments in is_ascii_alphabetic_lowercase
         let mask = (word + 0x7f7f_7f7f_7f7f_7f7f) & 0x8080_8080_8080_8080;
-        let title_case = if cfg!(target_endian = "little") {
-            !(word + 0x1f1f_1f1f_1f1f_1f3f) | (word + 0x0505_0505_0505_0525)
-        } else {
-            !(word + 0x3f1f_1f1f_1f1f_1f1f) | (word + 0x2505_0505_0505_0505)
+        let title_case = cfg_select! {
+            any(target_endian = "little", target_abi = "polyasm") => {
+                !(word + 0x1f1f_1f1f_1f1f_1f3f) | (word + 0x0505_0505_0505_0525)
+            }
+            _ => !(word + 0x3f1f_1f1f_1f1f_1f1f) | (word + 0x2505_0505_0505_0505),
         };
         (title_case & mask) == 0
     }

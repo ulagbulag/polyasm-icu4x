@@ -192,7 +192,12 @@ pub use log;
 #[doc(hidden)] // internal
 #[cfg(all(
     not(feature = "logging"),
-    all(debug_assertions, feature = "alloc", not(target_os = "none"))
+    all(
+        debug_assertions,
+        feature = "alloc",
+        not(target_os = "none"),
+        not(target_abi = "polyasm")
+    )
 ))]
 pub mod log {
     extern crate std;
@@ -205,7 +210,12 @@ pub mod log {
 
 #[cfg(all(
     not(feature = "logging"),
-    not(all(debug_assertions, feature = "alloc", not(target_os = "none"),))
+    not(all(
+        debug_assertions,
+        feature = "alloc",
+        not(target_os = "none"),
+        not(target_abi = "polyasm")
+    ))
 ))]
 #[doc(hidden)] // internal
 pub mod log {
